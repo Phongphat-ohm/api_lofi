@@ -175,7 +175,6 @@ app.post('/register', async (req, res) => {
     } else {
         try {
             const adduser = await userscls.addUser(body.username, body.password, body.email, body.url, query.type);
-            console.log(body.url);
             res.send(adduser)
         } catch (error) {
             res.send({
