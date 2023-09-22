@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const { Users } = require('./function');
 const { Buffer } = require('buffer')
-const WebSocket = require('ws');
 
 const port = 3560;
 const app = express();
