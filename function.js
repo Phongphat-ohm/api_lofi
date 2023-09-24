@@ -94,7 +94,7 @@ function todoList() {
         const date = new Date();
         const addTodo = {
             date: {
-                day: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}}`,
+                day: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`,
                 time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
             },
             content: data.c,
