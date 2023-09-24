@@ -1,7 +1,7 @@
 console.clear();
 const express = require('express');
 const cors = require('cors');
-const { Users } = require('./function');
+const { Users, todoList } = require('./function');
 const { Buffer } = require('buffer')
 
 const port = 3560;
@@ -183,6 +183,21 @@ app.post('/register', async (req, res) => {
             })
         }
     }
+})
+
+const todo = new todoList();
+
+app.post('/todo/add', async(req, res) => {
+    const body = req.body;
+
+    const addTo = await todo.add({
+        c: body.content,
+        cb: body.author,
+        st: body.status,
+        asi: body.assigned
+    })
+
+    res.send(addTo);
 })
 
 app.listen(port, () => {

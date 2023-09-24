@@ -89,4 +89,38 @@ function Users() {
     }
 }
 
-module.exports = { Users }
+function todoList() {
+    this.add = async (data) => {
+        const date = new Date();
+        const addTodo = {
+            date: {
+                day: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}}`,
+                time: `${date.getHours()}:${date.getMin()}:${date.getSeconds()}`
+            },
+            content: data.c,
+            createBy: data.cb,
+            status: data.st,
+            assigned: data.asi
+        };
+
+        const dataRef = ref(db, '/todolist');
+
+        try {
+            await set(dataRef, addTodo);
+            return {
+                status: 200,
+                code: "SUCCESS",
+                message: 'สร้างรายการใหม่เรียบร้อยแล้ว',
+                data: addTodo
+            };
+        } catch (error) {
+            return {
+                status: 400,
+                code: "ERROR_CREATE_USER",
+                message: 'เกิดข้อผิดพลาดในการสร้างรายการใหม่'
+            };
+        }
+    }
+}
+
+module.exports = { Users, todoList }
