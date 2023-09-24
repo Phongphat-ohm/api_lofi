@@ -92,6 +92,7 @@ function Users() {
 function todoList() {
     this.add = async (data) => {
         const date = new Date();
+
         const addTodo = {
             date: {
                 day: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`,
@@ -103,23 +104,27 @@ function todoList() {
             assigned: data.asi
         };
 
-        const dataRef = ref(db, '/todolist');
+        const dataRefGet = ref(db, '/todolist');
 
-        try {
-            await set(dataRef, addTodo);
-            return {
-                status: 200,
-                code: "SUCCESS",
-                message: 'สร้างรายการใหม่เรียบร้อยแล้ว',
-                data: addTodo
-            };
-        } catch (error) {
-            return {
-                status: 400,
-                code: "ERROR_CREATE_USER",
-                message: 'เกิดข้อผิดพลาดในการสร้างรายการใหม่'
-            };
-        }
+        get(dataRefGet).then(result => {
+            const dataRef = ref(db, '/todolist/' + result.val.length + 1);
+
+            try {
+                set(dataRef, addTodo);
+                return {
+                    status: 200,
+                    code: "SUCCESS",
+                    message: 'สร้างรายการใหม่เรียบร้อยแล้ว',
+                    data: addTodo
+                };
+            } catch (error) {
+                return {
+                    status: 400,
+                    code: "ERROR_CREATE_USER",
+                    message: 'เกิดข้อผิดพลาดในการสร้างรายการใหม่'
+                };
+            }
+        })
     }
 }
 
