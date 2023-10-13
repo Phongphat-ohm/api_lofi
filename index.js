@@ -1,7 +1,7 @@
 console.clear();
 const express = require('express');
 const cors = require('cors');
-const { Users, todoList } = require('./function');
+const { Users, Song } = require('./function');
 const { Buffer } = require('buffer')
 
 const port = 3560;
@@ -185,19 +185,58 @@ app.post('/register', async (req, res) => {
     }
 })
 
-const todo = new todoList();
+// song
+const song = new Song();
 
-app.post('/todo/add', async(req, res) => {
+app.get('/song/get', async (req, res) => {
+    const get = await song.getSongs();
+
+    res.send(get);
+})
+
+app.get('/song/get/where', async (req, res) => {
+    const name = req.body.name;
+
+    if (!name) {
+        res.send({
+            status: 400,
+            code: "NAME_IS_EMPTY",
+            message: "ชื่อเพลงเป็นค่าว่าง"
+        })
+    } else {
+        const get = await song.getSongWhere(req.query.name);
+
+        res.send(get);
+    }
+})
+
+app.post('/song/add', async (req, res) => {
     const body = req.body;
+    var responce;
 
-    const addTo = await todo.add({
-        c: body.content,
-        cb: body.author,
-        st: body.status,
-        asi: body.assigned
-    })
+    if (!body.name) {
+        responce = {
+            status: 400,
+            code: "NAME_IS_EMPTY",
+            message: "ชื่อเพลงเป็นค่าว่าง"
+        }
+    } else if (!body.time) {
+        responce = {
+            status: 400,
+            code: "TIME_IS_EMPTY",
+            message: "เวลาเป็นค่าว่าง"
+        }
+    } else {
+        const result = await song.addSong(body.name, body.time);
 
-    res.send(addTo);
+        if (result.status == 200) {
+            responce = result;
+        } else {
+            responce = result;
+        }
+    }
+
+    res.send(responce);
 })
 
 app.listen(port, () => {
