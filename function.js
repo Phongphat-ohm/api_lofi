@@ -89,43 +89,66 @@ function Users() {
     }
 }
 
-function todoList() {
-    this.add = async (data) => {
-        const date = new Date();
+function Song() {
+    this.addSong = async (name, time) => {
+        const dataSong = {
+            name: name,
+            time: time
+        }
 
-        const addTodo = {
-            date: {
-                day: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`,
-                time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-            },
-            content: data.c,
-            createBy: data.cb,
-            status: data.st,
-            assigned: data.asi
-        };
+        const newItemRef = await ref(db, 'songs/' + name);
 
-        const dataRefGet = ref(db, '/todolist');
+        await set(newItemRef, dataSong)
 
-        get(dataRefGet).then(result => {
-            const dataRef = ref(db, '/todolist/' + result.val.length + 1);
+        return {
+            status: 200,
+            code: "SUCCESS",
+            message: "สำเร็จ",
+            data: dataSong
+        }
+    }
 
-            try {
-                set(dataRef, addTodo);
+    this.getSongs = async () => {
+        const refer = ref(db, '/songs');
+
+        return get(refer).then(snapshot => {
+            if (snapshot.exists()) {
                 return {
                     status: 200,
                     code: "SUCCESS",
-                    message: 'สร้างรายการใหม่เรียบร้อยแล้ว',
-                    data: addTodo
-                };
-            } catch (error) {
+                    message: "สำเร็จ",
+                    data: snapshot.val()
+                }
+            } else {
                 return {
                     status: 400,
-                    code: "ERROR_CREATE_USER",
-                    message: 'เกิดข้อผิดพลาดในการสร้างรายการใหม่'
-                };
+                    code: "NOT_FOUND_SONFS",
+                    message: "ไม่พบเพลง"
+                }
+            }
+        })
+    }
+
+    this.getSongWhere = async (name) => {
+        const refer = ref(db, '/songs/' + name);
+
+        return get(refer).then(snapshot => {
+            if (snapshot.exists()) {
+                return {
+                    status: 200,
+                    code: "SUCCESS",
+                    message: "สำเร็จ",
+                    data: snapshot.val()
+                }
+            } else {
+                return {
+                    status: 400,
+                    code: "NOT_FOUND_SONFS",
+                    message: "ไม่พบเพลง"
+                }
             }
         })
     }
 }
 
-module.exports = { Users, todoList }
+module.exports = { Users, Song }
